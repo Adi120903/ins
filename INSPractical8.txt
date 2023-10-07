@@ -1,0 +1,35 @@
+Practical : 8
+Aim: Write a program to calculate HMAC-SHA1 Signature.
+Theory: In cryptography, an HMAC (sometimes expanded as either keyed-hash message authentication code or hash-based message authentication code) is a specific type of message authentication code (MAC) involving a cryptographic hash function and a secret cryptographic key. 
+It may be used to simultaneously verify both the data integrity and the authentication of a message, as with any MAC. SHA-1 is one of the hash function which produces a hash digest of 160 bits (20 bytes). 
+Documents may refer to SHA-1 as just "SHA", even though this may conflict with the other Standard Hash Algorithms such as SHA-0, SHA-2 and SHA-3. HMAC does not encrypt the message. 
+Instead, the message (encrypted or not) must be sent alongside the HMAC hash. Parties with the secret key will hash the message again themselves, and if it is authentic, the received and computed hashes will match.
+
+Program:
+import java.security.SignatureException; 
+import java.util.*; 
+import java.security.*;
+import javax.crypto.*;
+import java.security.InvalidKeyException;
+import javax.crypto.spec.*;
+import javax.crypto.spec.SecretKeySpec;
+public class Msgobj{ 
+private static final String HMAC_SHA1_ALGORITHM="hMACsha1";
+private static String toHexString(byte[] bytes){ 
+Formatter formatter=new Formatter();
+for(byte b:bytes){
+formatter.format("%02x", b);
+}
+return formatter.toString();
+}
+public static String calculateRFC2104HMAC(String data,String key)throws SignatureException,NoSuchAlgorithmException,InvalidKeyException{
+SecretKeySpec signingKey=new SecretKeySpec(key.getBytes(),HMAC_SHA1_ALGORITHM);
+Mac mac=Mac.getInstance(HMAC_SHA1_ALGORITHM); mac.init(signingKey);
+returntoHexString(mac.doFinal(data.getBytes())); 
+}
+
+public static void main(String[] args)throws Exception{
+String hmac=calculateRFC2104HMAC("data","key");
+System.out.println(hmac);
+}
+}

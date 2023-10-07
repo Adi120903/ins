@@ -1,0 +1,35 @@
+Practical : 6
+Aim: Write a program to implement the Diffie-Hellman Key Agreement algorithm to generate symmetric keys.
+Theory: Diffie–Hellman key exchange (DH) is a method of securely exchanging cryptographic keys over a public channel.
+Step 1: A and B agree on two large Prime Numbers ‘N’ and ‘G’ respectively.
+Step 2: A select another large random number ‘x’ and calculate A such that
+A= (G^x) mod N
+Step 3: Sender send the number ‘A’ to receiver.
+Step 4: B select another large random number ‘y’ and calculate B such that
+B= (G^y) mod N
+Step 5: Receiver send the number ‘B’ to sender.
+Step 6: Sender now compute Secret Key K1 such that K1= (B^x) mod N
+Step 7: Receiver now compute Secret Key K2 such that K2= (A^y) mod N
+Program:
+import java.math.BigInteger;
+import java.util.*;
+public class DiffieHellman {
+public static void main(String[] args) {
+Scanner sc=new Scanner(System.in);
+BigInteger n,g,x,y,k1,k2,A,B;
+System.out.println("Enter two Prime Numbers: ");
+n=new BigInteger(sc.next());
+g=new BigInteger(sc.next());
+System.out.println("Person A:Enter your Secret Number");
+x=new BigInteger(sc.next());
+A=g.modPow(x,n);
+System.out.println("Person B:Enter your Secret Number");
+y=new BigInteger(sc.next());
+B=g.modPow(y,n);
+k1=B.modPow(x,n);
+k2=A.modPow(y,n);
+System.out.println("A's Secret Key:" +k1);
+System.out.println("B's Secret Key:" +k2);
+}
+}
+Output:
