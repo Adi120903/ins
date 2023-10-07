@@ -1,0 +1,113 @@
+Practical : 3
+Aim: Write programs to implement the following Transposition Cipher Techniques: 
+          - Rail Fence Cipher      - Simple Columnar Technique
+2)Rail Fence Cipher:    
+The rail fence cipher (sometimes called zigzag cipher) is a transposition cipher that jumbles up the order of the letters of a message using a basic algorithm.
+The rail fence cipher works by writing your message on alternate lines across the page, and then reading off each line in turn.
+For example, let’s consider the plaintext “This is a secret message”.
+
+To encode this message we will first write over two lines (the “rails of the fence”) as follows:
+
+Note that all white spaces have been removed from the plain text.
+The Cipher Text is then read off by writing the top row first, followed by the bottom row:
+
+Program:
+import java.io.*;
+public class Railfence {
+    public static void main(String[] args)throws IOException {
+        String pt,ct="";
+        pt="TYCSBNB";
+        String even="",odd="";
+        for(int i=0;i<pt.length();i++){
+            if(i%2==0){ 
+                even=even+pt.charAt(i);
+            }
+            else{
+                odd=odd+pt.charAt(i);
+            }
+            ct=even+odd;
+        }
+        System.out.println("Plain Text:" +pt);
+        System.out.println("Cipher Text:" +ct);
+    }
+}
+2)Simple Columnar Technique:
+Columnar Transposition involves writing the plaintext out in rows , and then reading the ciphertext off in in columns.
+We first pick a keyword for our encryption. We write the plaintext out in a grid where the number of columns is the number of letters in the keyword. We then title each column with the respective letter from the keyword. We take the letters in the keyword in alphabetical order, and read down the columns in this order. If a letter is repeated, we do the one that appears first, then the next and so on.
+As an example, let's encrypt the message "The tomato is a plant in the nightshade family" using the keyword tomato. We get the grid given below.
+
+.
+
+We have written the keyword above the grid of the plaintext, and also the numbers telling us which order to read the columns in. Notice that the first "O" is 3 and the second "O" is 4, and the same thing for the two "T"s.Starting with the column headed by "A", our ciphertext begins "TINESAX" from this column. We now move to the column headed by "M", and so on through the letters of the keyword in alphabetical order to get the ciphertext "TINESAX / EOAHTFX / HTLTHEY / MAIIAIX / TAPNGDL / OSTNHMX" (where the / tells you where a new column starts). The final ciphertext is thus "TINES AXEOA HTFXH TLTHE YMAII AIXTA PNGDL OSTNH MX".
+Program:
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+public class simplecolumnar {
+    public static void main(String[] args) throws IOException{
+        String plaintext,ciphertext="",temp="";
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        int i=0,j=0;
+        System.out.println("Enter plaintext");
+        plaintext=br.readLine();
+        int plen=plaintext.length();
+        for (i=0;i<plen;i++){
+            if(plaintext.charAt(i)!=' '){
+                temp+=plaintext.charAt(i);
+            }
+        }
+        int len=temp.length();
+        System.out.println("Enter no. of columns max."+len+"):");
+        int cols=Integer.parseInt(br.readLine());
+        if(cols<=len){
+            int rows=1,k=0;
+            if(len%cols==0){
+                rows=len/cols;
+            }
+            else{
+                rows=(len/cols)+1;
+            }
+            char matrix[][]=new char[rows][cols];
+            for(i=0;i<rows;i++){
+                for (j = 0; (j<cols)&&(k<len); j++) {
+                    matrix[i][j]=temp.charAt(k);
+                    k++;
+                }
+            }
+            i--;
+            for(;j<cols;j++){
+                matrix[i][j]='$';
+            }
+            for(i=0;i<rows;i++){
+                for(j=0;j<cols;j++){
+                    System.out.print(matrix[i][j]+"");
+                }
+                System.out.println();
+            }
+            int enCol[]=new int[cols];
+            for(i=0;i<cols;i++){
+                System.out.println("Enter column no."+(i+1)+":");
+                enCol[i]=Integer.parseInt(br.readLine())-1;
+            }
+            if(enCol.length==cols){
+            for(i=0;i<cols;i++){
+                for(j=0;j<rows;j++){
+                    ciphertext+=matrix[j][enCol[i]];
+                }
+            }
+        }
+        temp="";
+        for(i=0;i<ciphertext.length();i++){
+            if(ciphertext.charAt(i)!='$'){
+                temp+=ciphertext.charAt(i);
+            }
+        }
+        ciphertext=temp;
+        System.out.println("Ciphertext: "+ciphertext);
+    }
+    else{
+        System.out.println("Incorrect no. of Columns");
+    }    
+    }
+}
+

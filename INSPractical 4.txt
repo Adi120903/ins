@@ -1,0 +1,137 @@
+Practical : 4
+Aim: Write program to encrypt and decrypt strings using 
+         - DES Algorithm     - AES Algorithm
+1)DES Algorithm:
+DES is the archetypal block cipher—an algorithm that takes a fixed-length string of plaintext bits and transforms it through a series of complicated operations into another ciphertext bitstring of the same length. In the case of DES, the block size is 64 bits. DES also uses a key to customize the transformation, so that decryption can only be performed by those who know the particular key used to encrypt. The key ostensibly consists of 64 bits; however, only 56 of these are actually used by the algorithm. Eight bits are used solely for checking parity, and are thereafter discarded. Hence the effective key length is 56 bits. Like other block ciphers, DES by itself is not a secure means of encryption, but must instead be used in a mode of operation.
+Decryption uses the same structure as encryption, but with the keys used in reverse order.
+Program:
+import java.io.UnsupportedEncodingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+public class DesEncrypter {
+    Cipher ecipher;
+    Cipher dcipher;
+    DesEncrypter(SecretKey key){
+        try{
+            ecipher=Cipher.getInstance("DES");
+            dcipher=Cipher.getInstance("DES");
+            ecipher.init(Cipher.ENCRYPT_MODE,key);
+            dcipher.init(Cipher.DECRYPT_MODE,key);
+        }
+        catch(javax.crypto.NoSuchPaddingException e){}
+        catch(java.security.NoSuchAlgorithmException e){}
+        catch(java.security.InvalidKeyException e){}
+    }
+    public String encrypt(String str){
+        try{
+            byte[] utf8=str.getBytes("Utf8");
+            byte[] enc=ecipher.doFinal(utf8);
+            return new sun.misc.BASE64Encoder().encode(enc);
+        }
+        catch(javax.crypto.BadPaddingException e){}
+        catch(IllegalBlockSizeException e){}
+        catch(UnsupportedEncodingException e){}
+        catch(java.io.IOException e){}
+        return null;
+    }
+    public String decrypt(String str){
+        try{
+            byte[] dec=new sun.misc.BASE64Decoder().decodeBuffer(str);
+            byte[] utf8=dcipher.doFinal(dec);
+            return new String(utf8,"Utf8");
+        }
+        catch(javax.crypto.BadPaddingException e){}
+        catch(IllegalBlockSizeException e){}
+        catch(UnsupportedEncodingException e){}
+        catch(java.io.IOException e){}
+        return null;
+    }
+    public static void main(String[] args) {
+        System.out.println();
+        System.out.println("------*---Encrypting String using DES---*------");
+        System.out.println();
+        try{
+            SecretKey key=KeyGenerator.getInstance("DES").generateKey();
+            DesEncrypter encrypter=new DesEncrypter(key);
+            String s="Don't tell Anybody!!";
+            String d="Hello";
+            String encrypted=encrypter.encrypt(s);
+            String decrypted=encrypter.decrypt(encrypted);
+            System.out.println("Original String is:"+s);
+            System.out.println("Encrypted String is:"+encrypted);
+            System.out.println("Decrypted String is:"+decrypted);
+        }
+        catch(Exception e){}
+    }
+}
+2) AES Algorithm:
+AES is based on a design principle known as a substitution–permutation network, and is efficient in both software and hardware.
+AES operates on a 4 × 4 column-major order array of bytes, termed the state. Most AES calculations are done in a particular finite field.For instance, if there are 16 bytes, {\displaystyle b_{0},b_{1},...,b_{15}}b0,b1,b2……b16 , these bytes are represented as this two-dimensional array:
+  b0  b4  b8    b12
+  b1  b5  b9    b13
+  b2  b6  b10  b14
+  b3  b7  b11  b15
+{\displaystyle {\begin{bmatrix}b_{0}&b_{4}&b_{8}&b_{12}\\b_{1}&b_{5}&b_{9}&b_{13}\\b_{2}&b_{6}&b_{10}&b_{14}\\b_{3}&b_{7}&b_{11}&b_{15}\end{bmatrix}}}The key size used for an AES cipher specifies the number of transformation rounds that convert the input, called the plaintext, into the final output, called the ciphertext. The number of rounds are as follows:
+* 10 rounds for 128-bit keys
+* 12 rounds for 192-bit keys.
+* 14 rounds for 256-bit keys.
+Each round consists of several processing steps, including one that depends on the encryption key itself. A set of reverse rounds are applied to transform ciphertext back into the original plaintext using the same encryption key.
+Program:
+import java.security.*;
+import javax.crypto.*;
+import java.io.*;
+public class AES_StringEncrypter {
+    Cipher ecipher;
+    Cipher dcipher;
+    AES_StringEncrypter(SecretKey key){
+        try{
+            ecipher=Cipher.getInstance("AES");
+            dcipher=Cipher.getInstance("AES");
+            ecipher.init(Cipher.ENCRYPT_MODE,key);
+            dcipher.init(Cipher.DECRYPT_MODE,key);
+        }
+        catch(Exception e){
+        }
+    }
+    public String encrypt(String str){
+        try{
+            byte[] utf8=str.getBytes("UTF-8");
+            byte[] enc=ecipher.doFinal(utf8);
+            return new sun.misc.BASE64Encoder().encode(enc);
+        }
+        catch(Exception e){
+        }
+        return null;
+    }
+    public String decrypt(String str){
+        try{
+            byte[] dec=new sun.misc.BASE64Decoder().decodeBuffer(str);
+            byte[] utf8=dcipher.doFinal(dec);
+            return new String(utf8,"UTF8");
+        }
+        catch(Exception e){
+        }
+        return null;
+    }
+    public static void main(String[] args) {
+        SecretKey key=null;
+        try{
+            KeyGenerator keyGen=KeyGenerator.getInstance("AES");
+            key=keyGen.generateKey();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        AES_StringEncrypter dese=new AES_StringEncrypter(key);
+        String o="abc";
+        String en=dese.encrypt(o);
+        String de=dese.decrypt(en);
+        System.out.println("Original Text:"+o);
+        System.out.println("Encrypted Text:"+en);
+        System.out.println("Decrypted Text:"+de);
+    }
+}
+
+
